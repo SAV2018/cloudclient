@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import ru.sav.cloudclient.R;
 
 public class MainActivity extends AppCompatActivity {
-    private MenuItem itemConnection; // пункт Connection в Bottom Navigation
+    private MenuItem itemConnection; // пункт меню Connection в Bottom Navigation
     private boolean connectionState; // состояние соединения с Cloud Server
 
     @Override
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             });
     }
 
-    void drawConnectionState() {
+    void drawConnectionState() { // показываем состояние соединения
         String message;
         Integer resource;
 
