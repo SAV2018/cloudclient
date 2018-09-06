@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CloudClient</string>
+    <string name="bottom_menu_upload">Upload</string>
+    <string name="bottom_menu_download">Download</string>
+    <string name="bottom_menu_connection">Connection</string>
+    <string name="greeting">Welcome\nto\nCloud Client</string>
+</resources>
