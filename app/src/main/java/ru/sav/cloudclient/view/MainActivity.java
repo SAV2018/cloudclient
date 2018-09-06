@@ -1,4 +1,4 @@
-package ru.sav.cloudclient.view;
+﻿package ru.sav.cloudclient.view;
 
 import android.content.ClipData;
 import android.support.annotation.NonNull;
@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 import ru.sav.cloudclient.R;
 
 public class MainActivity extends AppCompatActivity {
-    private MenuItem itemConnection;
-    private boolean connectionState;
+    private MenuItem itemConnection; // пункт Connection в Bottom Navigation
+    private boolean connectionState; // состояние соединения с Cloud Server
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
