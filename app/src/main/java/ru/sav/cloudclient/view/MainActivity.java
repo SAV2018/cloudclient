@@ -2,13 +2,21 @@ package ru.sav.cloudclient.view;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.List;
+
 import ru.sav.cloudclient.R;
+import ru.sav.cloudclient.view.fragment.SearchFragment;
+import rx.Observable;
+import rx.Observer;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,12 +55,21 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         case R.id.action_search:
-
+                            changeFragment(3);
                             break;
                     }
                     return true;
                 }
             });
+    }
+
+    private void changeFragment(int position) {
+        Fragment fragment = null;
+
+        if (position == 3) {
+            fragment = new SearchFragment();
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
 
     void drawConnectionState() { // показываем состояние соединения

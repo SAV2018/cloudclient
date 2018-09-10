@@ -5,4 +5,6 @@
     <string name="bottom_menu_connection">Connection</string>
     <string name="greeting">Welcome\nto\nCloud Client</string>
     <string name="bottom_menu_search">Search</string>
+    <string name="hint">Input a string</string>
+    <string name="button">Send</string>
 </resources>
