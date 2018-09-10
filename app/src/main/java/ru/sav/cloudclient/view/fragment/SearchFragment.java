@@ -1,6 +1,7 @@
 package ru.sav.cloudclient.view.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,10 +27,11 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     EditText input;
     Button button;
     Observable<String> observable;
+    Observer<String> observer;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search,container,false);
 
         output = view.findViewById(R.id.text_view);
@@ -43,7 +45,6 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-
     }
 
     @Override
@@ -63,12 +64,13 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"send: " + input.getText().toString());
-                observable.just(input.getText().toString());
+                observable = Observable.just(input.getText().toString());
                 input.setText("");
+                observable.subscribe(observer);
             }
         });
 
-        Observer<String> observer = new Observer<String>() {
+        observer = new Observer<String>() {
             @Override
             public void onNext(String s) {
                 output.setText(String.format("%s, %s", output.getText(), s));
@@ -86,6 +88,6 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             }
         };
 
-        observable.subscribe(observer);
+
     }
 }
