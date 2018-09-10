@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_download:
 
                             break;
+                        case R.id.action_search:
+
+                            break;
                     }
                     return true;
                 }
