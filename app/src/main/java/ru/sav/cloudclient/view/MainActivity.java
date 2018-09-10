@@ -1,21 +1,15 @@
-﻿package ru.sav.cloudclient.view;
+package ru.sav.cloudclient.view;
 
-import android.content.ClipData;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.util.TimeUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.util.concurrent.TimeUnit;
-
 import ru.sav.cloudclient.R;
+
 
 public class MainActivity extends AppCompatActivity {
     private MenuItem itemConnection; // пункт меню Connection в Bottom Navigation
