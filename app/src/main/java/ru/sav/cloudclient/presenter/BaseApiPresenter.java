@@ -2,13 +2,13 @@ package ru.sav.cloudclient.presenter;
 
 import com.arellomobile.mvp.MvpPresenter;
 
-import rx.Observer;
+import io.reactivex.Observer;
 
 
 abstract class BaseApiPresenter<T> extends MvpPresenter<BaseApiView> implements Observer<T> {
 
     @Override
-    public void onCompleted() {
+    public void onComplete() {
         getViewState().hideLoading();
     }
 

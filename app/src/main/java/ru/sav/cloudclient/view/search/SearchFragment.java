@@ -1,10 +1,8 @@
-package ru.sav.cloudclient.view.fragment;
+package ru.sav.cloudclient.view.search;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import ru.sav.cloudclient.R;
-import rx.Observable;
-import rx.Observer;
+
 
 public class SearchFragment extends android.support.v4.app.Fragment {
     final String TAG = "SearchFragment";
@@ -34,10 +30,7 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search,container,false);
 
-        output = view.findViewById(R.id.text_view);
-        input = view.findViewById(R.id.edit_text);
-        button = view.findViewById(R.id.button_send);
-
+        bindViews(view);
         initObservation();
         return view;
     }
@@ -60,17 +53,19 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     private void initObservation() {
         observable = Observable.just("test", "test2");
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG,"send: " + input.getText().toString());
-                observable = Observable.just(input.getText().toString());
-                input.setText("");
-                observable.subscribe(observer);
-            }
+        button.setOnClickListener(v -> {
+            Log.d(TAG,"send: " + input.getText().toString());
+            observable = Observable.just(input.getText().toString());
+            input.setText("");
+            observable.subscribe(observer);
         });
 
         observer = new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(TAG,"onSubscribe");
+            }
+
             @Override
             public void onNext(String s) {
                 output.setText(String.format("%s, %s", output.getText(), s));
@@ -83,11 +78,17 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             }
 
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 Log.d(TAG,"onCompleted");
             }
         };
 
 
+    }
+
+    private void bindViews(View view) {
+        output = view.findViewById(R.id.text_view);
+        input = view.findViewById(R.id.edit_text);
+        button = view.findViewById(R.id.button_send);
     }
 }
