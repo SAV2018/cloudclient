@@ -1,15 +1,9 @@
 package ru.sav.cloudclient.presenter;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Flowable;
 
 
-public class MainApiPresenter extends BaseApiPresenter<String> {
-
-    @Override
-    public void onSubscribe(Disposable d) {
-
-    }
+public class MainApiPresenter extends BaseApiPresenter<String, BaseApiView> {
 
     @Override
     public void onNext(String s) {
@@ -18,6 +12,6 @@ public class MainApiPresenter extends BaseApiPresenter<String> {
 
     public void update() {
         getViewState().showLoading();
-        Observable.just("1", "2", "3", "4").subscribe(this);
+        Flowable.just("this is test:", "1", "2", "3", "4").subscribe(this);
     }
 }

@@ -19,25 +19,21 @@ import ru.sav.cloudclient.R;
 
 public class SearchFragment extends android.support.v4.app.Fragment {
     final String TAG = "SearchFragment";
-    TextView output;
-    EditText input;
-    Button button;
-    Observable<String> observable;
-    Observer<String> observer;
+    private TextView output;
+    private EditText input;
+    private Button button;
+    private Observable<String> observable;
+    private Observer<String> observer;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle bundle) {
         View view = inflater.inflate(R.layout.fragment_search,container,false);
 
-        bindViews(view);
+        bindViews(view, bundle);
         initObservation();
         return view;
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
     }
 
     @Override
@@ -48,6 +44,12 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putString("list", output.getText().toString());
     }
 
     private void initObservation() {
@@ -68,7 +70,11 @@ public class SearchFragment extends android.support.v4.app.Fragment {
 
             @Override
             public void onNext(String s) {
-                output.setText(String.format("%s, %s", output.getText(), s));
+                if (output.getText().length() > 0) {
+                    output.setText(String.format("%s, %s", output.getText(), s));
+                } else {
+                    output.setText(s);
+                }
                 Log.d(TAG,"onNext: " + s);
             }
 
@@ -82,13 +88,17 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                 Log.d(TAG,"onCompleted");
             }
         };
-
-
     }
 
-    private void bindViews(View view) {
+    private void bindViews(View view, Bundle bundle) {
+        // binding
         output = view.findViewById(R.id.text_view);
         input = view.findViewById(R.id.edit_text);
         button = view.findViewById(R.id.button_send);
+
+        // initialization
+        if (bundle != null) {
+            output.setText(bundle.getString("list", ""));
+        }
     }
 }
