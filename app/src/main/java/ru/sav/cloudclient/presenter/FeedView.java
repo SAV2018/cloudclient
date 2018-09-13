@@ -5,6 +5,7 @@ import java.util.List;
 import ru.sav.cloudclient.model.FeedViewModel;
 
 
-interface FeedView extends BaseApiView {
+public interface FeedView extends BaseApiView {
+
     void setItems(List<FeedViewModel> items);
 }

@@ -9,14 +9,18 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.sav.cloudclient.R;
+import ru.sav.cloudclient.model.FeedViewModel;
+import ru.sav.cloudclient.presenter.FeedPresenter;
+import ru.sav.cloudclient.presenter.FeedView;
 
 
-public class FeedAdapter extends RecyclerView.Adapter {
-    private List<Object> items;
+public class FeedAdapter extends RecyclerView.Adapter  {
+    private List<FeedViewModel> items;
     private FeedFragment feedFragment;
 
     FeedAdapter(FeedFragment feedFragment) {
         this.feedFragment = feedFragment;
+
     }
 
     @NonNull
@@ -53,10 +57,10 @@ public class FeedAdapter extends RecyclerView.Adapter {
         }
 
         void bindItem(int position) {
-            Object item = items.get(position);
+            FeedViewModel item = (FeedViewModel) items.get(position);
 
-            imageDescription.setText("Some description");
-            imageUrl.setText("http://anysite.com/images/somefile.png");
+            imageDescription.setText(item.imageDescription);
+            imageUrl.setText(item.imageUrl);
         }
     }
 }

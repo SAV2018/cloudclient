@@ -11,8 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ru.sav.cloudclient.R;
+import ru.sav.cloudclient.model.FeedViewModel;
 import ru.sav.cloudclient.presenter.FeedPresenter;
+import ru.sav.cloudclient.presenter.FeedView;
 
 
 public class FeedFragment extends android.support.v4.app.Fragment {
@@ -29,7 +33,6 @@ public class FeedFragment extends android.support.v4.app.Fragment {
 
         bindViews(view, bundle);
         initFeedList();
-
         return view;
     }
 

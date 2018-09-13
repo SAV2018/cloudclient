@@ -22,12 +22,14 @@ public class FeedPresenter extends BaseApiPresenter<Object, FeedView> {
 
     private void update(){
         List<FeedViewModel> items = new ArrayList<>();
+
         for (int i = 0; i < 10; i++) {
             FeedViewModel feed = new FeedViewModel();
-            feed.imageUrl = "http://...";
-            feed.imageDescription = "image description";
+            feed.imageUrl = "http://site.ru/img/" + i + ".png";
+            feed.imageDescription = "image #" + i + " description";
             items.add(feed);
         }
+
         getViewState().setItems(items);
     }
 }

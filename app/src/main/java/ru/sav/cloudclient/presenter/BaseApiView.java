@@ -7,5 +7,4 @@ public interface BaseApiView extends MvpView {
     void showLoading();
     void hideLoading();
     void showError(String msg);
-
 }
