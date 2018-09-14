@@ -18,9 +18,9 @@ public class FeedAdapter extends RecyclerView.Adapter  {
     private List<FeedViewModel> items;
     private FeedFragment feedFragment;
 
-    FeedAdapter(FeedFragment feedFragment) {
+    FeedAdapter(FeedFragment feedFragment, List<FeedViewModel> items) {
         this.feedFragment = feedFragment;
-
+        this.items = items;
     }
 
     @NonNull
@@ -57,7 +57,7 @@ public class FeedAdapter extends RecyclerView.Adapter  {
         }
 
         void bindItem(int position) {
-            FeedViewModel item = (FeedViewModel) items.get(position);
+            FeedViewModel item = items.get(position);
 
             imageDescription.setText(item.imageDescription);
             imageUrl.setText(item.imageUrl);

@@ -20,6 +20,10 @@ public class FeedPresenter extends BaseApiPresenter<Object, FeedView> {
         update();
     }
 
+    public void onButtonLoadClicked() {
+        update();
+    }
+
     private void update(){
         List<FeedViewModel> items = new ArrayList<>();
 
