@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">CloudClient</string>
-    <string name="bottom_menu_upload">Upload</string>
-    <string name="bottom_menu_download">Download</string>
+    <string name="bottom_menu_feed">Feed</string>
+    <string name="bottom_menu_profile">Profile</string>
     <string name="bottom_menu_connection">Connection</string>
     <string name="greeting">Welcome\nto\nCloud Client</string>
     <string name="bottom_menu_search">Search</string>
     <string name="hint">Input a string</string>
     <string name="button">Send</string>
+    <string name="fragment_title_search">Search Fragment</string>
+    <string name="fragment_title_feed">Feed Fragment</string>
+    <string name="fragment_title_profile">Profile Fragment</string>
+    <string name="empty_feed">No items</string>
 </resources>

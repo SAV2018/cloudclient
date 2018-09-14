@@ -1,22 +1,19 @@
 package ru.sav.cloudclient.view;
 
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ru.sav.cloudclient.R;
-import ru.sav.cloudclient.view.fragment.SearchFragment;
-import rx.Observable;
-import rx.Observer;
+import ru.sav.cloudclient.view.feed.FeedFragment;
+import ru.sav.cloudclient.view.profile.ProfileFragment;
+import ru.sav.cloudclient.view.search.SearchFragment;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,34 +35,37 @@ public class MainActivity extends AppCompatActivity {
         itemConnection = bottomNavigation.getMenu().findItem(R.id.action_connection);
 
         bottomNavigation.setOnNavigationItemSelectedListener(
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item -> {
                     switch (item.getItemId()) {
                         case R.id.action_connection:
                             connectionState = !connectionState; // меняем состояние
 
                             drawConnectionState();
                             break;
-                        case R.id.action_upload:
-
+                        case R.id.action_feed:
+                            changeFragment(2);
                             break;
-                        case R.id.action_download:
-
+                        case R.id.action_profile:
+                            changeFragment(1);
                             break;
                         case R.id.action_search:
                             changeFragment(3);
                             break;
                     }
                     return true;
-                }
-            });
+                });
     }
 
     private void changeFragment(int position) {
         Fragment fragment = null;
 
+
+        if (position == 1) {
+            fragment = new ProfileFragment();
+        }
+        if (position == 2) {
+            fragment = new FeedFragment();
+        }
         if (position == 3) {
             fragment = new SearchFragment();
         }
