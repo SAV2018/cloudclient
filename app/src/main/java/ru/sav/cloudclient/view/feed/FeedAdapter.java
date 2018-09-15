@@ -5,22 +5,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.List;
 
 import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.model.FeedViewModel;
-import ru.sav.cloudclient.presenter.FeedPresenter;
-import ru.sav.cloudclient.presenter.FeedView;
 
 
 public class FeedAdapter extends RecyclerView.Adapter  {
-    private List<FeedViewModel> items;
     private FeedFragment feedFragment;
 
-    FeedAdapter(FeedFragment feedFragment, List<FeedViewModel> items) {
+    FeedAdapter(FeedFragment feedFragment) {
         this.feedFragment = feedFragment;
-        this.items = items;
     }
 
     @NonNull
@@ -38,13 +35,13 @@ public class FeedAdapter extends RecyclerView.Adapter  {
 
     @Override
     public int getItemCount() {
-        return 0;
+        return feedFragment.items.isEmpty() ? 0 : feedFragment.items.size();
     }
 
 
     private class ItemHolder extends RecyclerView.ViewHolder {
         private final TextView imageDescription;
-        private final TextView imageHeader;
+        private final LinearLayout imageHeader;
         private final TextView imageUrl;
 
         ItemHolder(View view) {
@@ -57,7 +54,7 @@ public class FeedAdapter extends RecyclerView.Adapter  {
         }
 
         void bindItem(int position) {
-            FeedViewModel item = items.get(position);
+            FeedViewModel item = feedFragment.items.get(position);
 
             imageDescription.setText(item.imageDescription);
             imageUrl.setText(item.imageUrl);

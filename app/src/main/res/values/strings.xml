@@ -11,5 +11,7 @@
     <string name="fragment_title_feed">Feed Fragment</string>
     <string name="fragment_title_profile">Profile Fragment</string>
     <string name="empty_feed">No items</string>
-    <string name="button_load">LOAD</string>
+    <string name="button_load">Reload</string>
+    <string name="no_items">No items loaded.</string>
+    <string name="loaded_items">Loaded {0} items.</string>
 </resources>

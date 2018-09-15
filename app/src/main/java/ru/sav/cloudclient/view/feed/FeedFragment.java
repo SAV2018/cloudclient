@@ -6,12 +6,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +27,19 @@ import ru.sav.cloudclient.presenter.FeedPresenter;
 import ru.sav.cloudclient.presenter.FeedView;
 
 
-public class FeedFragment extends android.support.v4.app.Fragment {
+public class FeedFragment extends MvpAppCompatFragment implements FeedView {
+    private final String TAG = "FeedFragment";
     private FeedAdapter adapter;
     private RecyclerView feedListView;
     private TextView output;
     private TextView emptyFeedText;
     private Button buttonLoad;
-    private FeedPresenter feedPresenter;
-    private List<FeedViewModel> feed = new ArrayList<>();
+    private TextView statusBar;
+    List<FeedViewModel> items = new ArrayList<>();
+
+    @InjectPresenter
+    FeedPresenter feedPresenter;
+
 
     @Nullable
     @Override
@@ -47,34 +58,68 @@ public class FeedFragment extends android.support.v4.app.Fragment {
         feedListView = view.findViewById(R.id.feed_list);
         emptyFeedText = view.findViewById(R.id.empty_feed);
         buttonLoad = view.findViewById(R.id.button_load);
+        statusBar = view.findViewById(R.id.status_bar);
 
         // initialization
         if (bundle != null) {
-            output.setText(bundle.getString("list", ""));
+            // ...
         }
 
         // set handler
-        buttonLoad.setOnClickListener(v -> {
-            //feedPresenter.onButtonLoadClicked();
-        });
+        buttonLoad.setOnClickListener(v -> feedPresenter.onButtonLoadClicked());
     }
 
     private void initFeedList() {
         feedListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         feedListView.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new FeedAdapter(this, feed);
+        Log.d(TAG,"initFeedList: " + this.items.size());
+
+        adapter = new FeedAdapter(this);
         feedListView.setAdapter(adapter);
 
         checkEmptyList();
     }
 
     private void checkEmptyList() {
-        if (adapter.getItemCount() == 0) {
-            emptyFeedText.setVisibility(View.VISIBLE);
-        } else {
+        Log.d(TAG,"checkEmptyList: " + adapter.getItemCount());
+
+        if (adapter.getItemCount() > 0) {
             emptyFeedText.setVisibility(View.GONE);
+        } else {
+            emptyFeedText.setVisibility(View.VISIBLE);
         }
     }
 
+    @Override
+    public void setItems(List<FeedViewModel> items) {
+        Log.d(TAG,"setItems: " + "1) this.items - " + this.items.size() + " items - " + items.size());
+
+        this.items = items;
+        checkEmptyList();
+
+        Log.d(TAG,"2) this.items - " + this.items.size() + " items - " + items.size());
+        adapter.notifyDataSetChanged();
+        Integer n = adapter.getItemCount();
+        if (n > 0) {
+            statusBar.setText(MessageFormat.format(getString(R.string.loaded_items), adapter.getItemCount()));
+        } else {
+            statusBar.setText(R.string.no_items);
+        }
+    }
+
+    @Override
+    public void showLoading() {
+        Toast.makeText(this.getActivity(),"Loading data...", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void hideLoading() {
+        Toast.makeText(this.getActivity(),"Data loaded.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showError(String msg) {
+
+    }
 }

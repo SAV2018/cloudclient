@@ -9,6 +9,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
+
 import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.view.feed.FeedFragment;
 import ru.sav.cloudclient.view.profile.ProfileFragment;
@@ -16,7 +18,7 @@ import ru.sav.cloudclient.view.search.SearchFragment;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MvpAppCompatActivity {
     private MenuItem itemConnection; // пункт меню Connection в Bottom Navigation
     private boolean connectionState; // состояние соединения с Cloud Server
 
