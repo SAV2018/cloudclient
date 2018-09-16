@@ -110,7 +110,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
 
     @Override
     public void showLoading() {
-        Toast.makeText(this.getActivity(),"Loading data...", Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getActivity(), "Loading data...", Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.arellomobile.mvp.InjectViewState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import ru.sav.cloudclient.model.FeedViewModel;
 
@@ -37,6 +38,20 @@ public class FeedPresenter extends BaseApiPresenter<Object, FeedView> {
     private void update() {
         Log.d(TAG,"update: ");
 
+        getViewState().showLoading();
+
+//        try {
+//            Thread.currentThread().sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+//        try {
+//            TimeUnit.SECONDS.sleep(5);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         List<FeedViewModel> items = new ArrayList<>();
 
         for (int i = 0; i < (int) (Math.random() * 10); i++) {
@@ -47,5 +62,6 @@ public class FeedPresenter extends BaseApiPresenter<Object, FeedView> {
         }
 
         getViewState().setItems(items);
+        getViewState().hideLoading();
     }
 }
