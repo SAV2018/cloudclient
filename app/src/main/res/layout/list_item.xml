@@ -5,7 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
     android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:id="@+id/image_header"
@@ -14,7 +21,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/image_description"
+            android:id="@+id/image_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
@@ -24,10 +31,16 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/image_url"
+        android:id="@+id/image_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         tools:text="test text" />
+
+    <TextView
+        android:id="@+id/image_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="2018-10-12"/>
 
 </LinearLayout>

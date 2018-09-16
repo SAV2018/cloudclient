@@ -14,4 +14,5 @@
     <string name="button_load">Reload</string>
     <string name="no_items">No items loaded.</string>
     <string name="loaded_items">Loaded {0} items.</string>
+    <string name="server_not_responding">Server not responding.</string>
 </resources>

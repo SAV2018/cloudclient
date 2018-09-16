@@ -1,5 +1,8 @@
 package ru.sav.cloudclient.view.feed;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +24,12 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ru.sav.cloudclient.R;
-import ru.sav.cloudclient.model.FeedViewModel;
-import ru.sav.cloudclient.presenter.FeedPresenter;
-import ru.sav.cloudclient.presenter.FeedView;
+import ru.sav.cloudclient.data.model.FeedItem;
+import ru.sav.cloudclient.presenter.feed.FeedPresenter;
+import ru.sav.cloudclient.presenter.feed.FeedView;
 
 
 public class FeedFragment extends MvpAppCompatFragment implements FeedView {
@@ -35,10 +40,12 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     private TextView emptyFeedText;
     private Button buttonLoad;
     private TextView statusBar;
-    List<FeedViewModel> items = new ArrayList<>();
+    private ProgressBar progressBar;
+    List<FeedItem> items = new ArrayList<>();
 
     @InjectPresenter
     FeedPresenter feedPresenter;
+
 
 
     @Nullable
@@ -59,6 +66,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         emptyFeedText = view.findViewById(R.id.empty_feed);
         buttonLoad = view.findViewById(R.id.button_load);
         statusBar = view.findViewById(R.id.status_bar);
+        progressBar = view.findViewById(R.id.progress_bar);
 
         // initialization
         if (bundle != null) {
@@ -92,7 +100,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     }
 
     @Override
-    public void setItems(List<FeedViewModel> items) {
+    public void setItems(List<FeedItem> items) {
         Log.d(TAG,"setItems: " + "1) this.items - " + this.items.size() + " items - " + items.size());
 
         this.items = items;
@@ -110,16 +118,21 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
 
     @Override
     public void showLoading() {
-        Toast.makeText(this.getActivity(), "Loading data...", Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.VISIBLE);
+        feedListView.setVisibility(View.GONE);
     }
 
     @Override
     public void hideLoading() {
-        Toast.makeText(this.getActivity(),"Data loaded.", Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.GONE);
+        feedListView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showError(String msg) {
-
+        Toast.makeText(this.getActivity(), msg, Toast.LENGTH_SHORT).show();
+        statusBar.setText(msg);
+        progressBar.setVisibility(View.GONE);
     }
+
 }

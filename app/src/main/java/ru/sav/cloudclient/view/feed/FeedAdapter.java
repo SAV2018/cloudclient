@@ -5,12 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.util.List;
+
+import com.bumptech.glide.Glide;
+
+import java.util.Objects;
 
 import ru.sav.cloudclient.R;
-import ru.sav.cloudclient.model.FeedViewModel;
+import ru.sav.cloudclient.data.model.FeedItem;
 
 
 public class FeedAdapter extends RecyclerView.Adapter  {
@@ -40,24 +44,29 @@ public class FeedAdapter extends RecyclerView.Adapter  {
 
 
     private class ItemHolder extends RecyclerView.ViewHolder {
-        private final TextView imageDescription;
         private final LinearLayout imageHeader;
-        private final TextView imageUrl;
+        private final TextView imageLink, imageTitle, imageDate;
+        private final ImageView image;
 
         ItemHolder(View view) {
             super(view);
 
             // binding item's views
             imageHeader = itemView.findViewById(R.id.image_header);
-            imageDescription = itemView.findViewById(R.id.image_description);
-            imageUrl = itemView.findViewById(R.id.image_url);
+            imageTitle = itemView.findViewById(R.id.image_title);
+            imageLink = itemView.findViewById(R.id.image_link);
+            imageDate = itemView.findViewById(R.id.image_date);
+            image = itemView.findViewById(R.id.image);
         }
 
         void bindItem(int position) {
-            FeedViewModel item = feedFragment.items.get(position);
+            FeedItem item = feedFragment.items.get(position);
 
-            imageDescription.setText(item.imageDescription);
-            imageUrl.setText(item.imageUrl);
+            Glide.with(Objects.requireNonNull(feedFragment.getActivity())).load(item.link).into(image);
+
+            imageTitle.setText(item.title);
+            imageLink.setText(item.link);
+            imageDate.setText(item.date);
         }
     }
 }
