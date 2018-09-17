@@ -1,31 +1,22 @@
 package ru.sav.cloudclient.presenter.feed;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.arellomobile.mvp.InjectViewState;
 
 import org.reactivestreams.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.data.FlickrApiClient;
 import ru.sav.cloudclient.data.model.FeedItem;
 import ru.sav.cloudclient.data.model.Feed;
 import ru.sav.cloudclient.presenter.BaseApiPresenter;
-import ru.sav.cloudclient.view.feed.FeedFragment;
 
 
 @InjectViewState
 public class FeedPresenter extends BaseApiPresenter<Feed, FeedView> implements Subscriber<Feed> {
     private static final String TAG = "FeedPresenter";
-
 
     @Override
     public void attachView(FeedView view) {
