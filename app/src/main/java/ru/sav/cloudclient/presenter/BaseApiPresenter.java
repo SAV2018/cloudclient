@@ -6,7 +6,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 
-abstract class BaseApiPresenter<T, V extends BaseApiView> extends MvpPresenter<V>
+public abstract class BaseApiPresenter<T, V extends BaseApiView> extends MvpPresenter<V>
         implements Subscriber<T> {
 
     @Override
@@ -25,7 +25,5 @@ abstract class BaseApiPresenter<T, V extends BaseApiView> extends MvpPresenter<V
     }
 
     @Override
-    public void onNext(T t) {
-
-    }
+    public void onNext(T t) {  }
 }
