@@ -1,9 +1,10 @@
 package ru.sav.cloudclient.view;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -15,7 +16,6 @@ import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.view.feed.FeedFragment;
 import ru.sav.cloudclient.view.profile.ProfileFragment;
 import ru.sav.cloudclient.view.search.SearchFragment;
-
 
 
 public class MainActivity extends MvpAppCompatActivity {
@@ -92,5 +92,22 @@ public class MainActivity extends MvpAppCompatActivity {
         toast.show();
 
         itemConnection.setIcon(resource);
+    }
+
+    public boolean isInternetConnection() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkinfo = null;
+        if (connectivityManager != null) {
+            networkinfo = connectivityManager.getActiveNetworkInfo();
+        }
+
+        boolean result = (networkinfo != null && networkinfo.isConnected());
+
+        if (!result) {
+            Toast.makeText(this, R.string.msg_no_internet_connection,
+                    Toast.LENGTH_LONG).show();
+        }
+        return result;
     }
 }

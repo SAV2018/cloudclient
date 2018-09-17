@@ -1,8 +1,5 @@
 package ru.sav.cloudclient.view.feed;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,12 +21,12 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.data.model.FeedItem;
 import ru.sav.cloudclient.presenter.feed.FeedPresenter;
 import ru.sav.cloudclient.presenter.feed.FeedView;
+import ru.sav.cloudclient.view.MainActivity;
 
 
 public class FeedFragment extends MvpAppCompatFragment implements FeedView {
@@ -74,7 +71,12 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         }
 
         // set handler
-        buttonLoad.setOnClickListener(v -> feedPresenter.onButtonLoadClicked());
+        buttonLoad.setOnClickListener(v -> {
+
+            if (((MainActivity) getActivity()).isInternetConnection()) {
+                feedPresenter.onButtonLoadClicked();
+            }
+        });
     }
 
     private void initFeedList() {
@@ -112,7 +114,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         if (n > 0) {
             statusBar.setText(MessageFormat.format(getString(R.string.loaded_items), adapter.getItemCount()));
         } else {
-            statusBar.setText(R.string.no_items);
+            statusBar.setText(R.string.msg_no_items_loaded);
         }
     }
 
@@ -120,6 +122,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     public void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         feedListView.setVisibility(View.GONE);
+        statusBar.setText("");
     }
 
     @Override
@@ -134,5 +137,4 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         statusBar.setText(msg);
         progressBar.setVisibility(View.GONE);
     }
-
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.data.FlickrApiClient;
 import ru.sav.cloudclient.data.model.FeedItem;
 import ru.sav.cloudclient.data.model.Feed;
@@ -63,10 +64,7 @@ public class FeedPresenter extends BaseApiPresenter<Feed, FeedView> implements S
 
         List<FeedItem> items = new ArrayList<>();
         for (int i = 0; i < feed.items.size(); i++) {
-            FeedItem item = new FeedItem();
-            item.link = feed.items.get(i).media.m;
-            item.title = feed.items.get(i).title;
-            item.date = feed.items.get(i).published.substring(0,10);
+            FeedItem item = new FeedItem(feed.items.get(i));
             items.add(item);
         }
 

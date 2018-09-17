@@ -12,7 +12,8 @@
     <string name="fragment_title_profile">Profile Fragment</string>
     <string name="empty_feed">No items</string>
     <string name="button_load">Reload</string>
-    <string name="no_items">No items loaded.</string>
+    <string name="msg_no_items_loaded">No items loaded.</string>
     <string name="loaded_items">Loaded {0} items.</string>
-    <string name="server_not_responding">Server not responding.</string>
+    <string name="msg_server_not_responding">Server not responding.</string>
+    <string name="msg_no_internet_connection">No Internet Connection.</string>
 </resources>
