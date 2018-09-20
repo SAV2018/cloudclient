@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,14 +36,15 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     private RecyclerView feedListView;
     private TextView output;
     private TextView emptyFeedText;
-    private Button buttonLoad;
+    private Button buttonReload;
     private TextView statusBar;
     private ProgressBar progressBar;
     List<FeedItem> items = new ArrayList<>();
+    private ImageButton buttonLoad;
+    private ImageButton buttonSave;
 
     @InjectPresenter
     FeedPresenter feedPresenter;
-
 
 
     @Nullable
@@ -61,9 +63,11 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         output = view.findViewById(R.id.text_view);
         feedListView = view.findViewById(R.id.feed_list);
         emptyFeedText = view.findViewById(R.id.empty_feed);
-        buttonLoad = view.findViewById(R.id.button_load);
+        buttonReload = view.findViewById(R.id.button_load);
         statusBar = view.findViewById(R.id.status_bar);
         progressBar = view.findViewById(R.id.progress_bar);
+        buttonLoad = view.findViewById(R.id.button_load_bd);
+        buttonSave = view.findViewById(R.id.button_save_bd);
 
         // initialization
         if (bundle != null) {
@@ -71,12 +75,16 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         }
 
         // set handler
-        buttonLoad.setOnClickListener(v -> {
+        buttonReload.setOnClickListener(v -> {
 
-            if (((MainActivity) getActivity()).isInternetConnection()) {
-                feedPresenter.onButtonLoadClicked();
+            if (((MainActivity) FeedFragment.this.getActivity()).isInternetConnection()) {
+                feedPresenter.onButtonReloadClicked();
             }
         });
+
+        buttonLoad.setOnClickListener(v -> feedPresenter.onButtonLoadClicked());
+
+        buttonLoad.setOnClickListener(v -> feedPresenter.onButtonSaveClicked());
     }
 
     private void initFeedList() {

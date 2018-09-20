@@ -17,7 +17,7 @@ public class FlickrApiClient {
         return instance;
     }
 
-    public Flowable<Feed> getFeed(){
+    public Flowable<Feed> getFeed() {
         return feedApi.getFeed("json",1)   // set response type: json, no wrapper
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
