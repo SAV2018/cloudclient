@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,18 +33,15 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     private final String TAG = "FeedFragment";
     private FeedAdapter adapter;
     private RecyclerView feedListView;
-    private TextView output;
     private TextView emptyFeedText;
     private Button buttonReload;
     private TextView statusBar;
     private ProgressBar progressBar;
     List<FeedItem> items = new ArrayList<>();
-    private ImageButton buttonLoad;
-    private ImageButton buttonSave;
+    private Button buttonLoad, buttonDelete;
 
     @InjectPresenter
     FeedPresenter feedPresenter;
-
 
     @Nullable
     @Override
@@ -60,14 +56,13 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
 
     private void bindViews(View view, Bundle bundle) {
         // binding
-        output = view.findViewById(R.id.text_view);
         feedListView = view.findViewById(R.id.feed_list);
         emptyFeedText = view.findViewById(R.id.empty_feed);
         buttonReload = view.findViewById(R.id.button_load);
         statusBar = view.findViewById(R.id.status_bar);
         progressBar = view.findViewById(R.id.progress_bar);
         buttonLoad = view.findViewById(R.id.button_load_bd);
-        buttonSave = view.findViewById(R.id.button_save_bd);
+        buttonDelete = view.findViewById(R.id.button_delete);
 
         // initialization
         if (bundle != null) {
@@ -76,15 +71,26 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
 
         // set handler
         buttonReload.setOnClickListener(v -> {
-
+            Toast.makeText(FeedFragment.this.getActivity(), FeedPresenter.MSG_LOADING_NEW_PHOTOS,
+                    Toast.LENGTH_LONG).show();
             if (((MainActivity) FeedFragment.this.getActivity()).isInternetConnection()) {
                 feedPresenter.onButtonReloadClicked();
             }
         });
 
-        buttonLoad.setOnClickListener(v -> feedPresenter.onButtonLoadClicked());
+        buttonLoad.setOnClickListener(v -> {
+            Toast.makeText(FeedFragment.this.getActivity(), FeedPresenter.MSG_LOADING_FROM_DB,
+                    Toast.LENGTH_LONG).show();
+            feedPresenter.onButtonLoadClicked();
+        });
 
-        buttonLoad.setOnClickListener(v -> feedPresenter.onButtonSaveClicked());
+        buttonDelete.setOnClickListener(v -> {
+            Toast.makeText(FeedFragment.this.getActivity(), FeedPresenter.MSG_DELETING_ITEMS,
+                    Toast.LENGTH_LONG).show();
+            feedPresenter.onButtonDeleteClicked();
+        });
+
+        feedPresenter.onButtonLoadClicked();
     }
 
     private void initFeedList() {
@@ -111,26 +117,36 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
 
     @Override
     public void setItems(List<FeedItem> items) {
-        Log.d(TAG,"setItems: " + "1) this.items - " + this.items.size() + " items - " + items.size());
+        //Log.d(TAG,"setItems: " + "1) this.items - " + this.items.size() + " items - " + items.size());
 
         this.items = items;
         checkEmptyList();
 
-        Log.d(TAG,"2) this.items - " + this.items.size() + " items - " + items.size());
+        //Log.d(TAG,"2) this.items - " + this.items.size() + " items - " + items.size());
         adapter.notifyDataSetChanged();
         Integer n = adapter.getItemCount();
         if (n > 0) {
-            statusBar.setText(MessageFormat.format(getString(R.string.loaded_items), adapter.getItemCount()));
+            setMessage(MessageFormat.format(getString(R.string.loaded_items),
+                    adapter.getItemCount()));
         } else {
-            statusBar.setText(R.string.msg_no_items_loaded);
+            setMessage(getString(R.string.msg_no_items_loaded));
         }
+    }
+
+    @Override
+    public void addMessage(String message) {
+        statusBar.setText(String.format("%s %s", statusBar.getText(), message));
+    }
+
+    @Override
+    public void setMessage(String message) {
+        statusBar.setText(message);
     }
 
     @Override
     public void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         feedListView.setVisibility(View.GONE);
-        statusBar.setText("");
     }
 
     @Override
@@ -142,7 +158,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     @Override
     public void showError(String msg) {
         Toast.makeText(this.getActivity(), msg, Toast.LENGTH_SHORT).show();
-        statusBar.setText(msg);
+        addMessage(msg);
         progressBar.setVisibility(View.GONE);
     }
 }

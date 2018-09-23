@@ -1,7 +1,6 @@
 package ru.sav.cloudclient;
 
 import android.app.Application;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 

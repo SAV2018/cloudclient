@@ -2,7 +2,8 @@ package ru.sav.cloudclient.data;
 
 import io.realm.RealmObject;
 
-public class RealmModel extends RealmObject {
+
+public class FeedItemRealmModel extends RealmObject {
     private String link;
     private String date;
     private String title;

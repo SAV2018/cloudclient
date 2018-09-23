@@ -9,4 +9,6 @@ import ru.sav.cloudclient.presenter.BaseApiView;
 public interface FeedView extends BaseApiView {
 
     void setItems(List<FeedItem> items);
+    void addMessage(String message);
+    void setMessage(String message);
 }

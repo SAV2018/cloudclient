@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -20,7 +21,8 @@ import ru.sav.cloudclient.view.search.SearchFragment;
 
 public class MainActivity extends MvpAppCompatActivity {
     private MenuItem itemConnection; // пункт меню Connection в Bottom Navigation
-    private boolean connectionState; // состояние соединения с Cloud Server
+    private boolean connectionState; // состояние соединения с сервером
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class MainActivity extends MvpAppCompatActivity {
 
     private void init() {
         connectionState = false;
+        fragmentManager = getSupportFragmentManager();
+        changeFragment(0);
 
         final BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         itemConnection = bottomNavigation.getMenu().findItem(R.id.action_connection);
@@ -59,8 +63,7 @@ public class MainActivity extends MvpAppCompatActivity {
     }
 
     private void changeFragment(int position) {
-        Fragment fragment = null;
-
+        Fragment fragment = new StartFragment();
 
         if (position == 1) {
             fragment = new ProfileFragment();
@@ -71,7 +74,7 @@ public class MainActivity extends MvpAppCompatActivity {
         if (position == 3) {
             fragment = new SearchFragment();
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
 
     void drawConnectionState() { // показываем состояние соединения
