@@ -3,6 +3,7 @@ package ru.sav.cloudclient.view.feed;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,9 +19,9 @@ import android.widget.Toast;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ru.sav.cloudclient.R;
 import ru.sav.cloudclient.data.model.FeedItem;
@@ -84,13 +85,17 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
             feedPresenter.onButtonLoadClicked();
         });
 
-        buttonDelete.setOnClickListener(v -> {
-            Toast.makeText(FeedFragment.this.getActivity(), FeedPresenter.MSG_DELETING_ITEMS,
-                    Toast.LENGTH_LONG).show();
-            feedPresenter.onButtonDeleteClicked();
-        });
-
-        feedPresenter.onButtonLoadClicked();
+        buttonDelete.setOnClickListener(v -> new AlertDialog.Builder(
+                Objects.requireNonNull(this.getActivity())).
+                setMessage(R.string.msg_dialog_on_delete)
+                .setPositiveButton(R.string.dialog_ok_button,
+                        (dialog, id) -> {
+                            Toast.makeText(FeedFragment.this.getActivity(),
+                                    FeedPresenter.MSG_DELETING_ITEMS,
+                                    Toast.LENGTH_LONG).show();
+                            feedPresenter.onButtonDeleteClicked();
+                        })
+                .setNegativeButton(R.string.dialog_cancel_button, null).create().show());
     }
 
     private void initFeedList() {
@@ -125,12 +130,6 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         //Log.d(TAG,"2) this.items - " + this.items.size() + " items - " + items.size());
         adapter.notifyDataSetChanged();
         Integer n = adapter.getItemCount();
-        if (n > 0) {
-            setMessage(MessageFormat.format(getString(R.string.loaded_items),
-                    adapter.getItemCount()));
-        } else {
-            setMessage(getString(R.string.msg_no_items_loaded));
-        }
     }
 
     @Override
