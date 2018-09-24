@@ -5,6 +5,8 @@ public class FeedItem {
     public String link;
     public String date;
 
+    public FeedItem() {}
+
     public FeedItem(Feed.Item item) {
         final String noTitle = "<no_title>";
 
