@@ -2,6 +2,7 @@ package ru.sav.cloudclient.data;
 
 import java.util.List;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -20,14 +21,13 @@ public class FlickrApiClient {
         return instance;
     }
 
-    public Flowable<List<FeedItem>> getItems() {
+    public Single<List<FeedItem>> getItems() {
         return feedApi.getFeed("json",1) // set response type: json, no wrapper
                 .flatMap((Function<Feed, Flowable<List<Feed.Item>>>) feed -> Flowable.just(feed.items))
                 .flatMapIterable((Function<List<Feed.Item>, Iterable<Feed.Item>>) items -> items)
                 .map(FeedItem::new)
                 .toList()
-                .toFlowable()
-                .doOnNext(items -> new DataLoader().saveItemsToDB(items))
+                .doOnSuccess(items -> new DataLoader().saveItemsToDB(items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

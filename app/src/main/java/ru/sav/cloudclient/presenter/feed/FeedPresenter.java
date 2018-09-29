@@ -3,9 +3,6 @@ package ru.sav.cloudclient.presenter.feed;
 import android.util.Log;
 import com.arellomobile.mvp.InjectViewState;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,14 +127,15 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
             }
         });
 
-        new DataLoader().loadData().subscribe(new Subscriber<List<FeedItem>>() {
+        new DataLoader().loadData().subscribe(new SingleObserver<List<FeedItem>>() {
+
             @Override
-            public void onSubscribe(Subscription s) {
-                s.request(Long.MAX_VALUE);
+            public void onSubscribe(Disposable d) {
+
             }
 
             @Override
-            public void onNext(List<FeedItem> items) {
+            public void onSuccess(List<FeedItem> items) {
                 Log.d(TAG,"onNext: ");
                 for (int i = 0; i < items.size(); i++) {
                     Log.d(TAG, "item"+i+": "+items.get(i).title);
@@ -147,17 +145,13 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 getViewState().setMessage(MessageFormat.format(MSG_PATTERN_NEW_ITEMS_LOADED,
                         items.size()));
                 getCount();
+                getViewState().hideLoading();
             }
 
             @Override
             public void onError(Throwable e) {
                 getViewState().addMessage(e.getMessage());
                 getViewState().showError(e.getMessage());
-            }
-
-            @Override
-            public void onComplete() {
-                getViewState().hideLoading();
             }
         });
     }

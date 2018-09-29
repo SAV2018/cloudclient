@@ -4,9 +4,10 @@ import android.util.Log;
 import java.util.List;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.Single;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import ru.sav.cloudclient.data.model.FeedItem;
@@ -17,7 +18,7 @@ public class DataLoader {
     private Realm realm;
 
 
-    public Flowable<List<FeedItem>> loadData() {
+    public Single<List<FeedItem>> loadData() {
         Log.d(TAG,"loadData: ");
 
         return FlickrApiClient.getInstance().getItems();
@@ -40,8 +41,12 @@ public class DataLoader {
             }
         } catch (Exception e) {
             Log.d(TAG, "saveItemsToDB: error" + e.getMessage());
+            // return Completable.error(e); // Нина, это здесь вообще надо или onError отработает
+                                            // и так?
         }
-        return Completable.complete();
+        return Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<RealmResults<FeedItemRealmModel>> loadItemsFromDB() {
@@ -56,7 +61,9 @@ public class DataLoader {
         } catch (Exception e) {
             Log.d(TAG, "loadItemsFromDB: error "+e.getMessage());
         }
-        return Single.just(result);
+        return Single.just(result)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Completable deleteAll() {
@@ -67,7 +74,9 @@ public class DataLoader {
         } catch (Exception e) {
             Log.d(TAG, "deleteAll: error" + e.getMessage());
         }
-        return Completable.complete();
+        return Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<Long> getCountItemsInDB() {
@@ -80,6 +89,8 @@ public class DataLoader {
             Log.d(TAG, "getCountItemsInDB: error" + e.getMessage());
         }
         Log.d(TAG, "getCount (n): " + count + " items in DB.");
-        return Single.just(count);
+        return Single.just(count)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }
