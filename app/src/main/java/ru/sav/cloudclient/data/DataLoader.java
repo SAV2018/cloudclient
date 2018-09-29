@@ -41,8 +41,7 @@ public class DataLoader {
             }
         } catch (Exception e) {
             Log.d(TAG, "saveItemsToDB: error" + e.getMessage());
-            // return Completable.error(e); // Нина, это здесь вообще надо или onError отработает
-                                            // и так?
+            return Completable.error(e);
         }
         return Completable.complete()
                 .subscribeOn(Schedulers.io())
@@ -60,6 +59,7 @@ public class DataLoader {
             Log.d(TAG,"loadItemsFromDB (size): "+result.size());
         } catch (Exception e) {
             Log.d(TAG, "loadItemsFromDB: error "+e.getMessage());
+            return Single.error(e);
         }
         return Single.just(result)
                 .subscribeOn(Schedulers.io())
@@ -73,6 +73,7 @@ public class DataLoader {
             realm.executeTransaction(realm -> tempList.deleteAllFromRealm());
         } catch (Exception e) {
             Log.d(TAG, "deleteAll: error" + e.getMessage());
+            return Completable.error(e);
         }
         return Completable.complete()
                 .subscribeOn(Schedulers.io())
@@ -87,6 +88,7 @@ public class DataLoader {
             count = realm.where(FeedItemRealmModel.class).count();
         } catch (Exception e) {
             Log.d(TAG, "getCountItemsInDB: error" + e.getMessage());
+            return Single.error(e);
         }
         Log.d(TAG, "getCount (n): " + count + " items in DB.");
         return Single.just(count)

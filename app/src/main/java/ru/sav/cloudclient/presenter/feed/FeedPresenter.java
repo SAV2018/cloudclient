@@ -61,9 +61,11 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.d(TAG, "onError: ");
+
                         getViewState().hideLoading();
                         getViewState().setItems(new ArrayList<>());
-                        getViewState().addMessage(e.getMessage());
+                        getViewState().showError("Error loading data from DB: " + e.getMessage());
                         getCount();
                     }
                 });
@@ -91,8 +93,11 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
 
             @Override
             public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e.getMessage());
+
                 getViewState().hideLoading();
-                getViewState().setMessage(e.getMessage());
+                getViewState().setMessage("");
+                getViewState().showError("Error deleting from DB: " + e.getMessage());
                 getCount();
             }
         });
@@ -123,7 +128,9 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
 
             @Override
             public void onError(Throwable e) {
+                Log.d(TAG, "onError: ");
 
+                getViewState().showError("Error writing to DB: " + e.getMessage());
             }
         });
 
@@ -150,8 +157,9 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
 
             @Override
             public void onError(Throwable e) {
-                getViewState().addMessage(e.getMessage());
-                getViewState().showError(e.getMessage());
+                Log.d(TAG, "onError: ");
+
+                getViewState().showError("Error loading data: " + e.getMessage());
             }
         });
     }
@@ -170,7 +178,9 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
 
             @Override
             public void onError(Throwable e) {
-
+                Log.d(TAG, "onError: ");
+                
+                getViewState().showError("Database error: " + e.getMessage());
             }
         });
     }

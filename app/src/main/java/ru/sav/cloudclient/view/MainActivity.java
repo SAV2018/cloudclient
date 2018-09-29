@@ -1,12 +1,14 @@
 package ru.sav.cloudclient.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -112,5 +114,15 @@ public class MainActivity extends MvpAppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
         return result;
+    }
+
+    public static void showErrMsg(Context context, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle("ERROR: ")
+                .setMessage(message)
+                .setIcon(R.drawable.ic_error_24)
+                .setCancelable(false)
+                .setNegativeButton(R.string.dialog_ok_button, (dialog, id) -> dialog.cancel());
+        builder.create().show();
     }
 }
