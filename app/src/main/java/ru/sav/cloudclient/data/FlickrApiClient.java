@@ -1,11 +1,13 @@
 package ru.sav.cloudclient.data;
 
 import java.util.List;
+
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+
 import ru.sav.cloudclient.data.model.Feed;
 import ru.sav.cloudclient.data.model.FeedItem;
 import ru.sav.cloudclient.presenter.feed.FeedApi;
@@ -27,7 +29,7 @@ public class FlickrApiClient {
                 .flatMapIterable((Function<List<Feed.Item>, Iterable<Feed.Item>>) items -> items)
                 .map(FeedItem::new)
                 .toList()
-                .doOnSuccess(items -> new DataLoader().saveItemsToDB(items))
+                // .doOnSuccess(items -> new DataLoader().saveItemsToDB(items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

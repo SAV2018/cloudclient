@@ -25,11 +25,13 @@ public class DataLoader {
     }
 
     public Completable saveItemsToDB(List<FeedItem> items) {
-        Log.d(TAG, "saveItemsToDB: ");
+        Completable result = Completable.complete();
+
+        Log.d(TAG, "saveItemsToDB: "+this.toString());
 
         try {
             realm = Realm.getDefaultInstance();
-            for (int i = items.size() - 1; i >=0; i--) {
+            for (int i = items.size() - 1; i >= 0; i--) {
                 FeedItem item = items.get(i);
                 //Log.d(TAG, "onNext-RealmIterator: " + item.title);
                 realm.beginTransaction();
@@ -40,10 +42,10 @@ public class DataLoader {
                 realm.commitTransaction();
             }
         } catch (Exception e) {
-            Log.d(TAG, "saveItemsToDB: error" + e.getMessage());
-            return Completable.error(e);
+            Log.d(TAG, "Error in saveItemsToDB: " + e.getMessage());
+            result = Completable.error(e);
         }
-        return Completable.complete()
+        return result
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -69,7 +71,8 @@ public class DataLoader {
     public Completable deleteAll() {
         try {
             realm = Realm.getDefaultInstance();
-            final RealmResults<FeedItemRealmModel> tempList = realm.where(FeedItemRealmModel.class).findAll();
+            final RealmResults<FeedItemRealmModel> tempList =
+                    realm.where(FeedItemRealmModel.class).findAll();
             realm.executeTransaction(realm -> tempList.deleteAllFromRealm());
         } catch (Exception e) {
             Log.d(TAG, "deleteAll: error" + e.getMessage());
