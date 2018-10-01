@@ -50,6 +50,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                         getViewState().setMessage(MessageFormat.format(MSG_PATTERN_ITEMS_LOADED,
                                 results.size()));
                         getCount();
+                        dispose();
                     }
 
                     @Override
@@ -60,6 +61,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                         getViewState().setItems(new ArrayList<>());
                         getViewState().showError("Error loading data from DB: " + e.getMessage());
                         getCount();
+                        dispose();
                     }
                 });
     }
@@ -77,6 +79,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 getViewState().setItems(new ArrayList<>());
                 getViewState().setMessage("");
                 getCount();
+                dispose();
             }
 
             @Override
@@ -87,6 +90,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 getViewState().setMessage("");
                 getViewState().showError("Error deleting from DB: " + e.getMessage());
                 getCount();
+                dispose();
             }
         });
     }
@@ -118,6 +122,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 getViewState().hideLoading();
                 saveLoadedData(items);
                 getCount();
+                dispose();
             }
 
             @Override
@@ -125,6 +130,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 Log.d(TAG, "onError: ");
 
                 getViewState().showError("Error loading data: " + e.getMessage());
+                dispose();
             }
         });
     }
@@ -137,6 +143,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
             @Override
             public void onComplete() {
                 Log.d(TAG, "SavingObserver.onComplete: saving to DB is done.");
+                dispose();
             }
 
             @Override
@@ -144,6 +151,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 Log.d(TAG, "SavingObserver.onError: ");
 
                 getViewState().showError("Error writing to DB: " + e.getMessage());
+                dispose();
             }
             });
     }
@@ -154,6 +162,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
             @Override
             public void onSuccess(Long count) {
                 getViewState().addMessage(MessageFormat.format(MSG_PATTERN_ITEMS_IN_DB, count));
+                dispose();
             }
 
             @Override
@@ -161,6 +170,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 Log.d(TAG, "onError: ");
 
                 getViewState().showError("Database error: " + e.getMessage());
+                dispose();
             }
         });
     }
