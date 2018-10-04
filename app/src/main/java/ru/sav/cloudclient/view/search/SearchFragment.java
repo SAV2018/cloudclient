@@ -24,32 +24,49 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     private Button button;
     private Observable<String> observable;
     private Observer<String> observer;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle bundle) {
-        View view = inflater.inflate(R.layout.fragment_search,container,false);
+        view = inflater.inflate(R.layout.fragment_search,container,false);
 
-        bindViews(view, bundle);
-        initObservation();
+        Log.d(TAG, "onCreateView: ");
+        bindViews(bundle);
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle bundle) {
         super.onSaveInstanceState(bundle);
+
+        Log.d(TAG, "onSaveInstanceState: bundle.input = "+input.getText().toString()+
+        " bundle.list = "+output.getText().toString());
+
+        bundle.putString("input", input.getText().toString());
         bundle.putString("list", output.getText().toString());
+    }
+
+    private void bindViews(Bundle bundle) {
+        Log.d(TAG, "bindViews: ");
+
+        // binding
+        output = view.findViewById(R.id.text_view);
+        input = view.findViewById(R.id.edit_text);
+        button = view.findViewById(R.id.button_send);
+
+        initObservation();
+
+        // initialization
+        if (bundle != null) {
+            Log.d(TAG, "bindViews: bundle.input = "+
+                    bundle.getString("input", "")+" bundle.list = "+
+                    bundle.getString("list", ""));
+
+            input.setText(bundle.getString("input", ""));
+            output.setText(bundle.getString("list", ""));
+        }
     }
 
     private void initObservation() {
@@ -58,6 +75,7 @@ public class SearchFragment extends android.support.v4.app.Fragment {
         button.setOnClickListener(v -> {
             Log.d(TAG,"send: " + input.getText().toString());
             observable = Observable.just(input.getText().toString());
+
             input.setText("");
             observable.subscribe(observer);
         });
@@ -88,17 +106,5 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                 Log.d(TAG,"onCompleted");
             }
         };
-    }
-
-    private void bindViews(View view, Bundle bundle) {
-        // binding
-        output = view.findViewById(R.id.text_view);
-        input = view.findViewById(R.id.edit_text);
-        button = view.findViewById(R.id.button_send);
-
-        // initialization
-        if (bundle != null) {
-            output.setText(bundle.getString("list", ""));
-        }
     }
 }

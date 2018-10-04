@@ -7,6 +7,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -20,22 +22,31 @@ import ru.sav.cloudclient.view.search.SearchFragment;
 
 
 public class MainActivity extends MvpAppCompatActivity {
+    private static final String TAG = "MainActivity";
     private MenuItem itemConnection; // пункт меню Connection в Bottom Navigation
     private boolean connectionState; // состояние соединения с сервером
     FragmentManager fragmentManager;
+    private int menuPosition;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_main);
 
-        init();
+        if (bundle != null) {
+            menuPosition = bundle.getInt("menuPosition", 0);
+            Log.d(TAG, "onCreate: bundle.menuPosition = " + menuPosition);
+        } else {
+            menuPosition = 0;
+        }
+
+        init(bundle);
     }
 
-    private void init() {
+    private void init(Bundle bundle) {
         connectionState = false;
         fragmentManager = getSupportFragmentManager();
-        changeFragment(0);
+        if (bundle == null) changeFragment(menuPosition);
 
         final BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         itemConnection = bottomNavigation.getMenu().findItem(R.id.action_connection);
@@ -63,16 +74,23 @@ public class MainActivity extends MvpAppCompatActivity {
     }
 
     private void changeFragment(int position) {
-        Fragment fragment = new StartFragment();
+        Fragment fragment;
 
-        if (position == 1) {
-            fragment = new ProfileFragment();
-        }
-        if (position == 2) {
-            fragment = new FeedFragment();
-        }
-        if (position == 3) {
-            fragment = new SearchFragment();
+        Log.d(TAG, "changeFragment: ");
+
+        this.menuPosition = position;
+        switch (position) {
+            case 1:
+                fragment = new ProfileFragment();
+                break;
+            case 2:
+                fragment = new FeedFragment();
+                break;
+            case 3:
+                fragment = new SearchFragment();
+                break;
+            default:
+                fragment = new StartFragment();
         }
         fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
@@ -82,10 +100,10 @@ public class MainActivity extends MvpAppCompatActivity {
         Integer resource;
 
         if (connectionState) {
-            message ="Connecting to cloud server…";
+            message = "Connecting to cloud server…";
             resource = R.drawable.ic_cloud_24;
         } else {
-            message ="Disconnecting…";
+            message = "Disconnecting…";
             resource = R.drawable.ic_cloud_off_24;
         }
 
@@ -112,5 +130,23 @@ public class MainActivity extends MvpAppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
         return result;
+    }
+
+    public static void showErrMsg(Context context, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle("ERROR: ")
+                .setMessage(message)
+                .setIcon(R.drawable.ic_error_24)
+                .setCancelable(false)
+                .setNegativeButton(R.string.dialog_ok_button, (dialog, id) -> dialog.cancel());
+        builder.create().show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putInt("menuPosition", menuPosition);
+
+        Log.d(TAG, "onSaveInstanceState: bundle.menuPosition = " + menuPosition);
     }
 }
