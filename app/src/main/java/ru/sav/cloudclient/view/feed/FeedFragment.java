@@ -44,6 +44,13 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     @InjectPresenter
     FeedPresenter feedPresenter;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
