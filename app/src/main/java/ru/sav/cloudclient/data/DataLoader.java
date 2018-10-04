@@ -4,9 +4,10 @@ import android.util.Log;
 import java.util.List;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.Single;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import ru.sav.cloudclient.data.model.FeedItem;
@@ -17,18 +18,20 @@ public class DataLoader {
     private Realm realm;
 
 
-    public Flowable<List<FeedItem>> loadData() {
+    public Single<List<FeedItem>> loadData() {
         Log.d(TAG,"loadData: ");
 
         return FlickrApiClient.getInstance().getItems();
     }
 
     public Completable saveItemsToDB(List<FeedItem> items) {
-        Log.d(TAG, "saveItemsToDB: ");
+        Completable result = Completable.complete();
+
+        Log.d(TAG, "saveItemsToDB: "+this.toString());
 
         try {
             realm = Realm.getDefaultInstance();
-            for (int i = items.size() - 1; i >=0; i--) {
+            for (int i = items.size() - 1; i >= 0; i--) {
                 FeedItem item = items.get(i);
                 //Log.d(TAG, "onNext-RealmIterator: " + item.title);
                 realm.beginTransaction();
@@ -39,9 +42,12 @@ public class DataLoader {
                 realm.commitTransaction();
             }
         } catch (Exception e) {
-            Log.d(TAG, "saveItemsToDB: error" + e.getMessage());
+            Log.d(TAG, "Error in saveItemsToDB: " + e.getMessage());
+            result = Completable.error(e);
         }
-        return Completable.complete();
+        return result
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<RealmResults<FeedItemRealmModel>> loadItemsFromDB() {
@@ -55,19 +61,26 @@ public class DataLoader {
             Log.d(TAG,"loadItemsFromDB (size): "+result.size());
         } catch (Exception e) {
             Log.d(TAG, "loadItemsFromDB: error "+e.getMessage());
+            return Single.error(e);
         }
-        return Single.just(result);
+        return Single.just(result)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Completable deleteAll() {
         try {
             realm = Realm.getDefaultInstance();
-            final RealmResults<FeedItemRealmModel> tempList = realm.where(FeedItemRealmModel.class).findAll();
+            final RealmResults<FeedItemRealmModel> tempList =
+                    realm.where(FeedItemRealmModel.class).findAll();
             realm.executeTransaction(realm -> tempList.deleteAllFromRealm());
         } catch (Exception e) {
             Log.d(TAG, "deleteAll: error" + e.getMessage());
+            return Completable.error(e);
         }
-        return Completable.complete();
+        return Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<Long> getCountItemsInDB() {
@@ -78,8 +91,11 @@ public class DataLoader {
             count = realm.where(FeedItemRealmModel.class).count();
         } catch (Exception e) {
             Log.d(TAG, "getCountItemsInDB: error" + e.getMessage());
+            return Single.error(e);
         }
         Log.d(TAG, "getCount (n): " + count + " items in DB.");
-        return Single.just(count);
+        return Single.just(count)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

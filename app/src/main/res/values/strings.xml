@@ -19,6 +19,7 @@
         что Вы можете увидеть на загруженных из сети фотографиях.</string>
     <string name="button_load_from_db">Load All</string>
     <string name="dialog_cancel_button">Cancel</string>
-    <string name="dialog_ok_button">DELETE</string>
+    <string name="dialog_ok_button">OK</string>
     <string name="msg_dialog_on_delete">Delete ALL items from local database?</string>
+    <string name="dialog_delete_button">DELETE</string>
 </resources>

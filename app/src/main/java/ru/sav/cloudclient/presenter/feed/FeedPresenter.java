@@ -3,16 +3,12 @@ package ru.sav.cloudclient.presenter.feed;
 import android.util.Log;
 import com.arellomobile.mvp.InjectViewState;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.CompletableObserver;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.realm.RealmResults;
 import ru.sav.cloudclient.data.DataLoader;
 import ru.sav.cloudclient.data.FeedItemRealmModel;
@@ -35,7 +31,6 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
     @Override
     public void attachView(FeedView view) {
         super.attachView(view);
-
         onButtonLoadClicked();
     }
 
@@ -44,12 +39,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
         getViewState().setMessage(MSG_LOADING_FROM_DB);
 
         dataLoader.loadItemsFromDB()
-                .subscribe(new SingleObserver<RealmResults<FeedItemRealmModel>>() {
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
+                .subscribe(new DisposableSingleObserver<RealmResults<FeedItemRealmModel>>() {
 
                     @Override
                     public void onSuccess(RealmResults<FeedItemRealmModel> results) {
@@ -60,14 +50,18 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                         getViewState().setMessage(MessageFormat.format(MSG_PATTERN_ITEMS_LOADED,
                                 results.size()));
                         getCount();
+                        dispose();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.d(TAG, "onError: ");
+
                         getViewState().hideLoading();
                         getViewState().setItems(new ArrayList<>());
-                        getViewState().addMessage(e.getMessage());
+                        getViewState().showError("Error loading data from DB: " + e.getMessage());
                         getCount();
+                        dispose();
                     }
                 });
     }
@@ -75,12 +69,7 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
     public void onButtonDeleteClicked() { // удаление всего списка из БД
         getViewState().showLoading();
         getViewState().setMessage(MSG_DELETING_ITEMS);
-        dataLoader.deleteAll().subscribe(new CompletableObserver() {
-
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
+        dataLoader.deleteAll().subscribe(new DisposableCompletableObserver() {
 
             @Override
             public void onComplete() {
@@ -90,13 +79,18 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 getViewState().setItems(new ArrayList<>());
                 getViewState().setMessage("");
                 getCount();
+                dispose();
             }
 
             @Override
             public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e.getMessage());
+
                 getViewState().hideLoading();
-                getViewState().setMessage(e.getMessage());
+                getViewState().setMessage("");
+                getViewState().showError("Error deleting from DB: " + e.getMessage());
                 getCount();
+                dispose();
             }
         });
     }
@@ -112,33 +106,12 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
 
         getViewState().showLoading();
         getViewState().setMessage(MSG_LOADING_NEW_PHOTOS);
-        dataLoader.saveItemsToDB(new ArrayList<>()).subscribe(new CompletableObserver() {
+
+        dataLoader.loadData().subscribe(new DisposableSingleObserver<List<FeedItem>>() {
 
             @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(TAG, "saveItemsToDB.onComplete: saving to DB done.");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-
-        new DataLoader().loadData().subscribe(new Subscriber<List<FeedItem>>() {
-            @Override
-            public void onSubscribe(Subscription s) {
-                s.request(Long.MAX_VALUE);
-            }
-
-            @Override
-            public void onNext(List<FeedItem> items) {
-                Log.d(TAG,"onNext: ");
+            public void onSuccess(List<FeedItem> items) {
+                Log.d(TAG,"onSuccess: ");
                 for (int i = 0; i < items.size(); i++) {
                     Log.d(TAG, "item"+i+": "+items.get(i).title);
                 }
@@ -146,37 +119,58 @@ public class FeedPresenter extends BaseApiPresenter<List<FeedItem>, FeedView> {
                 getViewState().setItems(items);
                 getViewState().setMessage(MessageFormat.format(MSG_PATTERN_NEW_ITEMS_LOADED,
                         items.size()));
+                getViewState().hideLoading();
+                saveLoadedData(items);
                 getCount();
+                dispose();
             }
 
             @Override
             public void onError(Throwable e) {
-                getViewState().addMessage(e.getMessage());
-                getViewState().showError(e.getMessage());
-            }
+                Log.d(TAG, "onError: ");
 
-            @Override
-            public void onComplete() {
-                getViewState().hideLoading();
+                getViewState().showError("Error loading data: " + e.getMessage());
+                dispose();
             }
         });
     }
 
-    private void getCount() { // получить кол-во записей в БД
-        dataLoader.getCountItemsInDB().subscribe(new SingleObserver<Long>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+    private void saveLoadedData(List<FeedItem> items) { // сохранение згружунных данных в БД
+        Log.d(TAG, "saveLoadedData: ");
 
-            }
+        dataLoader.saveItemsToDB(items).subscribe(new DisposableCompletableObserver() {
 
             @Override
-            public void onSuccess(Long count) {
-                getViewState().addMessage(MessageFormat.format(MSG_PATTERN_ITEMS_IN_DB, count));
+            public void onComplete() {
+                Log.d(TAG, "SavingObserver.onComplete: saving to DB is done.");
+                dispose();
             }
 
             @Override
             public void onError(Throwable e) {
+                Log.d(TAG, "SavingObserver.onError: ");
 
+                getViewState().showError("Error writing to DB: " + e.getMessage());
+                dispose();
+            }
+            });
+    }
+
+    private void getCount() { // получить кол-во записей в БД
+        dataLoader.getCountItemsInDB().subscribe(new DisposableSingleObserver<Long>() {
+
+            @Override
+            public void onSuccess(Long count) {
+                getViewState().addMessage(MessageFormat.format(MSG_PATTERN_ITEMS_IN_DB, count));
+                dispose();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: ");
+
+                getViewState().showError("Database error: " + e.getMessage());
+                dispose();
             }
         });
     }

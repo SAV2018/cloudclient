@@ -44,6 +44,13 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     @InjectPresenter
     FeedPresenter feedPresenter;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -88,7 +95,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
         buttonDelete.setOnClickListener(v -> new AlertDialog.Builder(
                 Objects.requireNonNull(this.getActivity())).
                 setMessage(R.string.msg_dialog_on_delete)
-                .setPositiveButton(R.string.dialog_ok_button,
+                .setPositiveButton(R.string.dialog_delete_button,
                         (dialog, id) -> {
                             Toast.makeText(FeedFragment.this.getActivity(),
                                     FeedPresenter.MSG_DELETING_ITEMS,
@@ -157,7 +164,7 @@ public class FeedFragment extends MvpAppCompatFragment implements FeedView {
     @Override
     public void showError(String msg) {
         Toast.makeText(this.getActivity(), msg, Toast.LENGTH_SHORT).show();
-        addMessage(msg);
         progressBar.setVisibility(View.GONE);
+        MainActivity.showErrMsg(this.getActivity(), msg);
     }
 }
